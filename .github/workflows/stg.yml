@@ -35,6 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/get_terraform_shared_library_aws
+      - uses: ./shared/actions/all/gitCommitHash
       - uses: ./shared/actions/all/gcpAuth
       - uses: ./shared/actions/all/gcpAuthDocker
       - uses: ./shared/actions/all/dockerBuildPush
