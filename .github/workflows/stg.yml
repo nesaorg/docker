@@ -38,6 +38,14 @@ jobs:
       - uses: ./shared/actions/all/gitCommitHash
       - uses: ./shared/actions/all/gcpAuth
       - uses: ./shared/actions/all/gcpAuthDocker
+      - uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          swap-storage: true
       - uses: ./shared/actions/all/dockerBuildPush
         env:
           IMAGE_NAME: ${{ env.PROJECT }}-${{ env.APPLICATION }}
