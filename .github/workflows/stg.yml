@@ -1,0 +1,42 @@
+name: STG Deploy
+
+env:
+  ENV: stg
+  PROJECT: nesa
+  APPLICATION: docker
+
+  SHARED_REPO_NAME: nesaorg/devops-shared-library
+  SHARED_REPO_NAME_SSH: git@github.com:nesaorg/devops-shared-library.git
+  SHARED_REPO_BRANCH: main
+
+  GITHUB_TOKEN: ${{ secrets.READ_GITHUB_TOKEN }}
+
+  GCP_PROJECT_ID: "phonic-scheme-417316"
+  GCP_KEY: ${{ secrets.GCP_KEY_STG }}
+  GCP_REGION: us-central1
+
+  DOCKER_FILE: ./Dockerfile
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: 'App/Build'
+    runs-on: ubuntu-22.04
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/get_terraform_shared_library_aws
+      - uses: ./shared/actions/all/gcpAuth
+      - uses: ./shared/actions/all/gcpAuthDocker
+      - uses: ./shared/actions/all/dockerBuildPush
+        env:
+          IMAGE_NAME: ${{ env.PROJECT }}-${{ env.APPLICATION }}

@@ -1,0 +1,10 @@
+runs:
+    using: "composite"
+    steps:
+      - name: Pull terraform shared repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.SHARED_REPO_NAME }}
+          ref: ${{ env.SHARED_REPO_BRANCH }}
+          token: ${{ env.GITHUB_TOKEN }}
+          path: ./shared
