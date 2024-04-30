@@ -1,0 +1,13 @@
+name: Test Repository Dispatch by webhook
+on:
+  repository_dispatch:
+    types: [trigger-build]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Triggered
+        run: echo "Triggered!"
