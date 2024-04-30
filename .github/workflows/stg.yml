@@ -74,8 +74,8 @@ jobs:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          LINK_STATICALLY=true GOARCH=amd64 make install
-#          LINK_STATICALLY=true GOARCH=amd64 make proto-gen
+          LINK_STATICALLY=true make proto-gen
+          LINK_STATICALLY=true make install
 #          ls -l ./code/build/nesad
 #          file ./code/build/nesad
 #          echo "Ensuring binary is statically linked ..."
