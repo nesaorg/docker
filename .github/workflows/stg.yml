@@ -68,7 +68,7 @@ jobs:
         uses: actions/setup-go@v5
 
       - name: Install make
-        run: apt update && apt-get install make
+        run: sudo apt update && sudo apt-get install make
 
       - name: Get dependencies
         run: go mod download
