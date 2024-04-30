@@ -17,8 +17,12 @@ env:
 
   DOCKER_FILE: ./Dockerfile
 
+  BRANCH_TO_BUILD_BY_DISPATCH: main
+
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types: [trigger-build]
   push:
     branches:
       - main
@@ -42,6 +46,8 @@ jobs:
           large-packages: true
           swap-storage: true
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH_TO_BUILD_BY_DISPATCH }}
       - uses: ./.github/actions/get_terraform_shared_library_aws
       - uses: ./shared/actions/all/gitCommitHash
       - uses: ./shared/actions/all/gcpAuth
