@@ -67,29 +67,37 @@ jobs:
       - name: Set up the latest Go
         uses: actions/setup-go@v5
 
+      - name: Install make
+        run: apt update && apt-get install make
+
       - name: Get dependencies
         run: go mod download
         working-directory: ${{ env.REPO_NESACHAIN_DIR }}
 
-      - name: Build for AMD64
-        env:
-          GOOS: linux
-          GOARCH: amd64
-        run: go build -v -o ./nesa-amd64
+      - name: Get dependencies
+        run: make proto-gen
         working-directory: ${{ env.REPO_NESACHAIN_DIR }}
 
-      - name: Build for ARM64
-        env:
-          GOOS: linux
-          GOARCH: arm64
-        run: go build -v -o ./nesa-arm64
-        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
 
-      - name: Copy binaries to root project folder
-        run: |
-          cp ./nesa-amd64 ../
-          cp ./nesa-arm64 ../
-        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+#      - name: Build for AMD64
+#        env:
+#          GOOS: linux
+#          GOARCH: amd64
+#        run: go build -v -o ./nesa-amd64
+#        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+#
+#      - name: Build for ARM64
+#        env:
+#          GOOS: linux
+#          GOARCH: arm64
+#        run: go build -v -o ./nesa-arm64
+#        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+#
+#      - name: Copy binaries to root project folder
+#        run: |
+#          cp ./nesa-amd64 ../
+#          cp ./nesa-arm64 ../
+#        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
       - run: ls -lA
 #      - uses: ./shared/actions/all/gitCommitHash
 #      - uses: ./shared/actions/all/gcpAuth
