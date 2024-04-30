@@ -55,7 +55,7 @@ jobs:
           token: ${{ env.GITHUB_TOKEN }}
           path: ./${{ env.REPO_NESACHAIN_DIR }}
       - uses: ./.github/actions/get_terraform_shared_library_aws
-      - run: sudo apt update && sudo apt-get install make git -y
+      - run: apt update && apt-get install make git -y
 
       - run: |
           set -eux
