@@ -72,6 +72,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - run: |
+          LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true GOARCH=amd64 make build
+          file ./code/build/nesad
+          echo "Ensuring binary is statically linked ..."
+          (file ./code/build/nesad | grep "statically linked")
+        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 #      - name: Build
 #        uses: goreleaser/goreleaser-action@v5
