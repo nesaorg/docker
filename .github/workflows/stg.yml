@@ -40,8 +40,8 @@ jobs:
       run:
         shell: bash
 
-    container:
-      image: golang:bookworm
+#    container:
+#      image: golang:bookworm
 
     steps:
       - uses: actions/checkout@v4
@@ -55,7 +55,8 @@ jobs:
           token: ${{ env.GITHUB_TOKEN }}
           path: ./${{ env.REPO_NESACHAIN_DIR }}
       - uses: ./.github/actions/get_terraform_shared_library_aws
-      - run: apt update && apt-get install make git -y
+      - run: sudo apt update && sudo apt-get install make git -y
+      - uses: actions/setup-go@v5
 
 #      - run: |
 #          set -eux
