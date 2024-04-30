@@ -2,6 +2,11 @@ name: Test Repository Dispatch by webhook
 on:
   repository_dispatch:
     types: [trigger-build]
+    inputs:
+      branch:
+        description: 'Branch name'
+        required: true
+        default: 'main'
 
 jobs:
   build:
