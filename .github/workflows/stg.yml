@@ -32,23 +32,18 @@ on:
       - main
 
 jobs:
-  build:
-    name: 'App/Build'
+  buildNesaChain:
+    name: 'Build/NesaChain'
     runs-on: ubuntu-22.04
 
     defaults:
       run:
         shell: bash
 
+    container:
+      image: golang:bookworm
+
     steps:
-#      - uses: jlumbroso/free-disk-space@main
-#        with:
-#          tool-cache: true
-#          android: true
-#          dotnet: true
-#          haskell: true
-#          large-packages: true
-#          swap-storage: true
       - uses: actions/checkout@v4
         with:
           ref: ${{ env.BRANCH_TO_BUILD_BY_DISPATCH }}
@@ -59,49 +54,116 @@ jobs:
           ref: ${{ env.REPO_NESACHAIN_BRANCH }}
           token: ${{ env.GITHUB_TOKEN }}
           path: ./${{ env.REPO_NESACHAIN_DIR }}
+      - uses: ./.github/actions/get_terraform_shared_library_aws
+      - name: Build
+        uses: goreleaser/goreleaser-action@v5
+        with:
+          version: latest
+          args: build
+          working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: ls -lA
       - run: ls -lA ./${{ env.REPO_NESACHAIN_DIR }}
-      - uses: ./.github/actions/get_terraform_shared_library_aws
-
-
-      - name: Set up the latest Go
-        uses: actions/setup-go@v5
-
-      - name: Install make
-        run: sudo apt update && sudo apt-get install make
-
-      - name: Get dependencies
-        run: go mod download
-        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
-
-      - name: Get dependencies
-        run: make proto-gen
-        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
-
-
-#      - name: Build for AMD64
+#
+#
+#
+#
+#
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: files.tar
+#          path: |
+#            files.tar
+#
+#
+#
+#      - name: Build
+#        uses: goreleaser/goreleaser-action@v5
+#        with:
+#          version: latest
+#          args: build --skip-validate
+#
+#      - name: Release
+#        uses: goreleaser/goreleaser-action@v5
+#        if: startsWith(github.ref, 'refs/tags/')
+#        with:
+#          version: latest
+#          args: release --skip-validate --clean
 #        env:
-#          GOOS: linux
-#          GOARCH: amd64
-#        run: go build -v -o ./nesa-amd64
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+#  build:
+#    name: 'App/Build'
+#    runs-on: ubuntu-22.04
+#
+#    defaults:
+#      run:
+#        shell: bash
+#
+#    steps:
+##      - uses: jlumbroso/free-disk-space@main
+##        with:
+##          tool-cache: true
+##          android: true
+##          dotnet: true
+##          haskell: true
+##          large-packages: true
+##          swap-storage: true
+#      - uses: actions/checkout@v4
+#        with:
+#          ref: ${{ env.BRANCH_TO_BUILD_BY_DISPATCH }}
+#      - name: Clone NesaChain repo
+#        uses: actions/checkout@v4
+#        with:
+#          repository: ${{ env.REPO_NESACHAIN_NAME }}
+#          ref: ${{ env.REPO_NESACHAIN_BRANCH }}
+#          token: ${{ env.GITHUB_TOKEN }}
+#          path: ./${{ env.REPO_NESACHAIN_DIR }}
+#      - run: ls -lA
+#      - run: ls -lA ./${{ env.REPO_NESACHAIN_DIR }}
+#      - uses: ./.github/actions/get_terraform_shared_library_aws
+#
+#
+#      - name: Set up the latest Go
+#        uses: actions/setup-go@v5
+#
+#      - name: Install make
+#        run: sudo apt update && sudo apt-get install make
+#
+#      - name: Get dependencies
+#        run: go mod download
 #        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
 #
-#      - name: Build for ARM64
-#        env:
-#          GOOS: linux
-#          GOARCH: arm64
-#        run: go build -v -o ./nesa-arm64
+#      - name: Get dependencies
+#        run: make proto-gen
 #        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
 #
-#      - name: Copy binaries to root project folder
-#        run: |
-#          cp ./nesa-amd64 ../
-#          cp ./nesa-arm64 ../
-#        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
-      - run: ls -lA
-#      - uses: ./shared/actions/all/gitCommitHash
-#      - uses: ./shared/actions/all/gcpAuth
-#      - uses: ./shared/actions/all/gcpAuthDocker
-#      - uses: ./shared/actions/all/dockerBuildPush
-#        env:
-#          IMAGE_NAME: ${{ env.PROJECT }}-${{ env.APPLICATION }}
+#
+##      - name: Build for AMD64
+##        env:
+##          GOOS: linux
+##          GOARCH: amd64
+##        run: go build -v -o ./nesa-amd64
+##        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+##
+##      - name: Build for ARM64
+##        env:
+##          GOOS: linux
+##          GOARCH: arm64
+##        run: go build -v -o ./nesa-arm64
+##        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+##
+##      - name: Copy binaries to root project folder
+##        run: |
+##          cp ./nesa-amd64 ../
+##          cp ./nesa-arm64 ../
+##        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+#      - run: ls -lA
+##      - uses: ./shared/actions/all/gitCommitHash
+##      - uses: ./shared/actions/all/gcpAuth
+##      - uses: ./shared/actions/all/gcpAuthDocker
+##      - uses: ./shared/actions/all/dockerBuildPush
+##        env:
+##          IMAGE_NAME: ${{ env.PROJECT }}-${{ env.APPLICATION }}
