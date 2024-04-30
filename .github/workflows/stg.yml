@@ -57,24 +57,25 @@ jobs:
       - uses: ./.github/actions/get_terraform_shared_library_aws
       - run: apt update && apt-get install make git -y
 
-      - run: |
-          set -eux
-          export ARCH=amd64
-          WASM_VERSION=$(go list -m all | grep github.com/CosmWasm/wasmvm || true)
-          if [ ! -z "${WASM_VERSION}" ];
-          then
-            WASMVM_REPO=$(echo $WASM_VERSION | awk '{print $1}')
-            WASMVM_VERS=$(echo $WASM_VERSION | awk '{print $2}')
-            wget -O /lib/libwasmvm_muslc.a https://${WASMVM_REPO}/releases/download/${WASMVM_VERS}/libwasmvm_muslc.$(uname -m).a
-          fi
-          go mod download
-        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - run: |
+#          set -eux
+#          export ARCH=amd64
+#          WASM_VERSION=$(go list -m all | grep github.com/CosmWasm/wasmvm || true)
+#          if [ ! -z "${WASM_VERSION}" ];
+#          then
+#            WASMVM_REPO=$(echo $WASM_VERSION | awk '{print $1}')
+#            WASMVM_VERS=$(echo $WASM_VERSION | awk '{print $2}')
+#            wget -O /lib/libwasmvm_muslc.a https://${WASMVM_REPO}/releases/download/${WASMVM_VERS}/libwasmvm_muslc.$(uname -m).a
+#          fi
+#          go mod download
+#        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          LEDGER_ENABLED=false BUILD_TAGS=muslc LINK_STATICALLY=true GOARCH=amd64 make build
-          ls -l ./code/build/nesad
+          LINK_STATICALLY=true GOARCH=amd64 make proto-gen
+          LINK_STATICALLY=true GOARCH=amd64 make install
+#          ls -l ./code/build/nesad
 #          file ./code/build/nesad
 #          echo "Ensuring binary is statically linked ..."
 #          (file ./code/build/nesad | grep "statically linked")
