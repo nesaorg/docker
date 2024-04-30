@@ -62,6 +62,35 @@ jobs:
       - run: ls -lA
       - run: ls -lA ./${{ env.REPO_NESACHAIN_DIR }}
       - uses: ./.github/actions/get_terraform_shared_library_aws
+
+
+      - name: Set up the latest Go
+        uses: actions/setup-go@v5
+
+      - name: Get dependencies
+        run: go mod download
+        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+
+      - name: Build for AMD64
+        env:
+          GOOS: linux
+          GOARCH: amd64
+        run: go build -v -o ./nesa-amd64
+        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+
+      - name: Build for ARM64
+        env:
+          GOOS: linux
+          GOARCH: arm64
+        run: go build -v -o ./nesa-arm64
+        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+
+      - name: Copy binaries to root project folder
+        run: |
+          cp ./nesa-amd64 ../
+          cp ./nesa-arm64 ../
+        working-directory: ${{ env.REPO_NESACHAIN_DIR }}
+      - run: ls -lA
 #      - uses: ./shared/actions/all/gitCommitHash
 #      - uses: ./shared/actions/all/gcpAuth
 #      - uses: ./shared/actions/all/gcpAuthDocker
