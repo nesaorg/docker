@@ -2,11 +2,8 @@ name: Test Repository Dispatch by webhook
 on:
   repository_dispatch:
     types: [trigger-build]
-    inputs:
-      branch:
-        description: 'Branch name'
-        required: true
-        default: 'main'
+    branches:
+      - main
 
 jobs:
   build:
@@ -14,5 +11,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: 'main'
+      - name: Run build
+        run: echo "Build triggered via repository dispatch on branch main!"
       - name: Triggered
         run: echo "Triggered!"
