@@ -74,7 +74,7 @@ jobs:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          env | grep LDFLAGS
+          export | grep LDFLAGS
           LINK_STATICALLY=true make build
 #          ls -l ./code/build/nesad
 #          file ./code/build/nesad
