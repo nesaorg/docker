@@ -74,7 +74,7 @@ jobs:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: |
-          LINK_STATICALLY=true make build
+          make build
 #          ls -l ./code/build/nesad
 #          file ./code/build/nesad
 #          echo "Ensuring binary is statically linked ..."
