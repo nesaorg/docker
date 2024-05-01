@@ -75,7 +75,7 @@ jobs:
 
       - run: |
           export | grep LDFLAGS
-          LINK_STATICALLY=true make build
+          GOARCH=amd64 make build
 #          ls -l ./code/build/nesad
 #          file ./code/build/nesad
 #          echo "Ensuring binary is statically linked ..."
