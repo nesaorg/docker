@@ -35,5 +35,5 @@ services:
       - "26656:26656"
       - "26657:26657"
     volumes:
-      - ./nesachain/genesis.json:/app/.nesachain/config/genesis.json
+#      - ./nesachain/genesis.json:/app/.nesachain/config/genesis.json
       - ./shared/:/app/shared
