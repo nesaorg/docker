@@ -1,6 +1,6 @@
 # Docker compose
 
-## Docker compose commands
+## Commands
 
 * `docker-compose -f docker-compose.yml up`    # Start all services in foreground
 * `docker-compose -f docker-compose.yml up -d` # Start all services in background
