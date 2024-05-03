@@ -24,3 +24,16 @@ services:
       - "17216:17216"
     volumes:
       - ./agent/conf.ini:/app/conf.ini
+      - ./shared/:/app/shared
+
+  nesachain:
+    image: ghcr.io/nesaorg/nesachain/nesachain:test
+    container_name: nesachain
+    restart: always
+    ports:
+      - "1317:1317"
+      - "26656:26656"
+      - "26657:26657"
+    volumes:
+      - ./nesachain/genesis.json:/app/.nesachain/config/genesis.json
+      - ./shared/:/app/shared
