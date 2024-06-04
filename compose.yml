@@ -1,0 +1,109 @@
+version: '3.8'
+services:
+  nesachain:
+    image: ghcr.io/nesaorg/nesachain/nesachain:test
+    container_name: nesachain
+    restart: always
+    ports:
+      - '26656-26657:26656-26657'
+      - '1317:1317'
+      - '9090:9090'
+      - '2345:2345'
+    volumes:
+      - nesachain-data:/app/.nesachain
+
+  proxy:
+    image: nginxproxy/nginx-proxy:alpine
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: 'true'
+    volumes:
+      - /srv/proxy-tier/certs:/etc/nginx/certs:ro
+      - /srv/proxy-tier/vhost.d:/etc/nginx/vhost.d
+      - /srv/proxy-tier/html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  letsencrypt-companion:
+    image: nginxproxy/acme-companion
+    restart: always
+    volumes:
+      - /srv/proxy-tier/certs:/etc/nginx/certs
+      - /srv/proxy-tier/acme:/etc/acme.sh
+      - /srv/proxy-tier/vhost.d:/etc/nginx/vhost.d
+      - /srv/proxy-tier/html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - proxy
+
+  mysql:
+    image: mysql:latest
+    container_name: agent-mysql
+    restart: always
+    environment:
+      # this is example, change it
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: agent
+      MYSQL_USER: agent
+      # this is example, change it
+      MYSQL_PASSWORD: 123456
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      timeout: 20s
+      retries: 10
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  init_agent_db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: init_agent_db
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./app.env:/app/agent/app.env
+    command:
+      - migrations
+
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agent
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+      init_agent_db:
+        condition: service_started
+      ipfs:
+        condition: service_started
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./app.env:/app/agent/app.env
+    environment:
+      - VIRTUAL_HOST=YOUR_DOMAIN_FOR_VHOST
+      - LETSENCRYPT_HOST=YOUR_DOMAIN_FOR_LETSENCRYPT
+      - LETSENCRYPT_EMAIL=YUOR_EMAIL_FOR_LETSENCRYPT
+    command:
+      - server
+
+  ipfs:
+    image: ipfs/kubo:v0.28.0
+    container_name: ipfs
+    restart: always
+    network_mode: host
+    volumes:
+      - ipfs-data:/data/ipfs
+      - ipfs-staging:/export
+
+volumes:
+  mysql-data:
+  ipfs-data:
+  ipfs-staging:
+  nesachain-data:
