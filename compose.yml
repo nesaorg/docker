@@ -1,16 +1,15 @@
 version: '3.8'
 services:
-  nesachain:
+  chain:
     image: ghcr.io/nesaorg/nesachain/nesachain:test
     container_name: nesachain
     restart: always
-    ports:
-      - '26656-26657:26656-26657'
-      - '1317:1317'
-      - '9090:9090'
-      - '2345:2345'
+    network_mode: host
+    env_file:
+      - path: ../.env
+        required: false
     volumes:
-      - nesachain-data:/app/.nesachain
+      - nesachain-data:/app/
 
   proxy:
     image: nginxproxy/nginx-proxy:alpine
@@ -19,7 +18,7 @@ services:
       - 80:80
       - 443:443
     labels:
-      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: 'true'
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
     volumes:
       - /srv/proxy-tier/certs:/etc/nginx/certs:ro
       - /srv/proxy-tier/vhost.d:/etc/nginx/vhost.d
@@ -37,62 +36,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       - proxy
-
-  mysql:
-    image: mysql:latest
-    container_name: agent-mysql
-    restart: always
-    environment:
-      # this is example, change it
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: agent
-      MYSQL_USER: agent
-      # this is example, change it
-      MYSQL_PASSWORD: 123456
-    healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      timeout: 20s
-      retries: 10
-    volumes:
-      - mysql-data:/var/lib/mysql
-
-  init_agent_db:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: init_agent_db
-    depends_on:
-      mysql:
-        condition: service_healthy
-    volumes:
-      - ./app.env:/app/agent/app.env
-    command:
-      - migrations
-
-  agent:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: agent
-    restart: always
-    depends_on:
-      mysql:
-        condition: service_healthy
-      init_agent_db:
-        condition: service_started
-      ipfs:
-        condition: service_started
-    ports:
-      - '8000:8000'
-    volumes:
-      - ./app.env:/app/agent/app.env
-    environment:
-      - VIRTUAL_HOST=YOUR_DOMAIN_FOR_VHOST
-      - LETSENCRYPT_HOST=YOUR_DOMAIN_FOR_LETSENCRYPT
-      - LETSENCRYPT_EMAIL=YUOR_EMAIL_FOR_LETSENCRYPT
-    command:
-      - server
-
   ipfs:
     image: ipfs/kubo:v0.28.0
     container_name: ipfs
@@ -101,9 +44,18 @@ services:
     volumes:
       - ipfs-data:/data/ipfs
       - ipfs-staging:/export
-
+    environment:
+       IPFS_USERNAME: admin
+       IPFS_PASSWORD: password
+    entrypoint: >
+      sh -c "
+      ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '[\"*\"]' &&
+      ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '[\"PUT\", \"POST\", \"GET\"]' &&
+      ipfs config --json API.HTTPHeaders.Access-Control-Allow-Headers '[\"Authorization\"]' &&
+      ipfs config --json API.HTTPHeaders.Authorization '[\"Basic $(echo -n ${IPFS_USERNAME}:${IPFS_PASSWORD} | base64)\"]' &&
+      ipfs daemon --enable-pubsub-experiment
+      "
 volumes:
-  mysql-data:
-  ipfs-data:
-  ipfs-staging:
-  nesachain-data:
+    chain-data:
+    ipfs-data:
+    ipfs-staging:

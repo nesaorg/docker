@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  agent:
+    extends:
+      file: compose.agent.yml
+      service: agent
+  mysql:
+    extends:
+      file: compose.agent.yml
+      service: mysql
+
+  dist-orc:
+    image: ghcr.io/nesaorg/dist-orc/dist-orc:test
+    container_name: dist-orc
+    restart: always
+    depends_on:
+      - agent
+    ports:
+      - "31333:31333"
+
+  dist-inf-client:
+    image: ghcr.io/nesaorg/dist-inf/dist-inf-client:test
+    container_name: dist-inf-client
+    restart: always
+    depends_on:
+      - dist-orc
+    ports:
+      - "31333:31333"
+  
