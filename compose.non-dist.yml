@@ -8,11 +8,7 @@ services:
     extends:
       file: compose.agent.yml
       service: mysql
-  inf:
-    image: ghcr.io/nesaorg/inf/inf:test
-    container_name: inf
-    restart: always
-    depends_on:
-      - agent
-    ports:
-      - "31333:31333"
+  orchestrator:
+    extends:
+      file: compose.orchestrator.yml
+      service: orchestrator

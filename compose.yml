@@ -5,9 +5,7 @@ services:
     container_name: nesachain
     restart: always
     network_mode: host
-    env_file:
-      - path: ../.env
-        required: false
+    env_file: ../.env
     volumes:
       - nesachain-data:/app/
 
@@ -24,7 +22,6 @@ services:
       - /srv/proxy-tier/vhost.d:/etc/nginx/vhost.d
       - /srv/proxy-tier/html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
-
   letsencrypt-companion:
     image: nginxproxy/acme-companion
     restart: always
@@ -56,6 +53,6 @@ services:
       ipfs daemon --enable-pubsub-experiment
       "
 volumes:
-    chain-data:
+    nesachain-data:
     ipfs-data:
     ipfs-staging:

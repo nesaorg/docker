@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  orchestrator:
+    image: ghcr.io/nesaorg/orchestrator/orchestrator:test
+    container_name: dist-orc
+    restart: always
+    depends_on:
+      - ipfs
+      - agent
+    ports:
+      - "31333:31333"

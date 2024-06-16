@@ -9,14 +9,10 @@ services:
       file: compose.agent.yml
       service: mysql
 
-  dist-orc:
-    image: ghcr.io/nesaorg/dist-orc/dist-orc:test
-    container_name: dist-orc
-    restart: always
-    depends_on:
-      - agent
-    ports:
-      - "31333:31333"
+  orchestrator:
+    extends:
+      file: compose.orchestrator.yml
+      service: orchestrator
 
   dist-inf-client:
     image: ghcr.io/nesaorg/dist-inf/dist-inf-client:test
