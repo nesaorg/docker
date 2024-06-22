@@ -54,7 +54,7 @@ services:
       - "5001:5001"
       - "8080:8080"
     volumes:
-      - ipfs_data:/data/ipfs 
+      - ipfs-data:/data/ipfs 
       - ipfs-staging:/export
       - ./update_peers.sh:/update_peers.sh
     entrypoint: >
