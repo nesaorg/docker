@@ -8,7 +8,8 @@ services:
     env_file: ../.env
     volumes:
       - nesachain-data:/app/
-
+    networks:
+      - nesa
   proxy:
     image: nginxproxy/nginx-proxy:alpine
     restart: always
@@ -22,6 +23,9 @@ services:
       - /srv/proxy-tier/vhost.d:/etc/nginx/vhost.d
       - /srv/proxy-tier/html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
+
+    networks:
+      - nesa
   letsencrypt-companion:
     image: nginxproxy/acme-companion
     restart: always
@@ -33,26 +37,37 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       - proxy
+    networks:
+      - nesa
+    
   ipfs:
-    image: ipfs/kubo:v0.28.0
-    container_name: ipfs
-    restart: always
-    network_mode: host
+    image: ipfs/go-ipfs:latest
+    container_name: ipfs_node
+    ports:
+      - "4001:4001"
+      - "5001:5001"
+      - "8080:8080"
     volumes:
-      - ipfs-data:/data/ipfs
+      - ipfs_data:/data/ipfs 
       - ipfs-staging:/export
-    environment:
-       IPFS_USERNAME: admin
-       IPFS_PASSWORD: password
+      - ./update_peers.sh:/update_peers.sh
     entrypoint: >
       sh -c "
-      ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin '[\"*\"]' &&
-      ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods '[\"PUT\", \"POST\", \"GET\"]' &&
-      ipfs config --json API.HTTPHeaders.Access-Control-Allow-Headers '[\"Authorization\"]' &&
-      ipfs config --json API.HTTPHeaders.Authorization '[\"Basic $(echo -n ${IPFS_USERNAME}:${IPFS_PASSWORD} | base64)\"]' &&
-      ipfs daemon --enable-pubsub-experiment
+      chmod +x /update_peers.sh &&
+      ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001 && 
+      ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080 && 
+      ipfs config Addresses.Swarm --json '[\"/ip4/0.0.0.0/tcp/4001\", \"/ip6/::/tcp/4001\"]' &&
+      ipfs config --json Pubsub.Router gossipsub &&
+      ipfs daemon --init
       "
+    networks:
+      - nesa
+
 volumes:
     nesachain-data:
     ipfs-data:
     ipfs-staging:
+
+networks:
+  nesa:
+    driver: bridge

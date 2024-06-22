@@ -25,6 +25,8 @@ services:
       - LETSENCRYPT_EMAIL=YOUR_EMAIL_FOR_LETSENCRYPT
     command:
       - server
+    networks:
+      - nesa
 
   mysql:
     image: mysql:latest
@@ -41,6 +43,7 @@ services:
       retries: 10
     volumes:
       - mysql-data:/var/lib/mysql
-
+    networks:
+      - nesa
 volumes:
   mysql-data:

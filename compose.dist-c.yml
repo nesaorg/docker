@@ -22,4 +22,6 @@ services:
       - dist-orc
     ports:
       - "31333:31333"
+    networks:
+      - nesa
   
