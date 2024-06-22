@@ -4,7 +4,9 @@ services:
     image: ghcr.io/nesaorg/dist-inf/dist-inf-server:test
     container_name: dist-inf-server
     restart: always
+    environment:
+      - INITIAL_PEER=$INITIAL_PEER
     ports:
-      - "31333:31333"
+      - "31331:31331"
     networks:
       - nesa

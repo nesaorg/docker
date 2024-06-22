@@ -1,11 +1,16 @@
 version: '3.8'
 services:
   chain:
-    image: ghcr.io/nesaorg/nesachain/nesachain:test
+    image: ghcr.io/nesaorg/nesachain/nesachain:latest
     container_name: nesachain
     restart: always
     network_mode: host
     env_file: ../.env
+    ports:
+      - "26656:26656"
+      - "26657:26657"
+      - "1317:1317"
+      - "9090:9090"
     volumes:
       - nesachain-data:/app/
     networks:
@@ -14,8 +19,9 @@ services:
     image: nginxproxy/nginx-proxy:alpine
     restart: always
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
+
     labels:
       com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
     volumes:

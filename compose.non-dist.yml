@@ -12,3 +12,7 @@ services:
     extends:
       file: compose.orchestrator.yml
       service: orchestrator
+  mongodb:
+    extends:
+      file: compose.orchestrator.yml
+      service: mongodb

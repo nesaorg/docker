@@ -1,13 +1,7 @@
 version: '3.8'
 services:
   agent:
-    build:
-      context: .
-      dockerfile: Dockerfile.builder
-      args:
-        GOBUILD: "go build"
-        NAME: "agent"
-        GITHUB_TOKEN: "${GITHUB_TOKEN}"
+    image: ghcr.io/nesaorg/agent/agent:test
     container_name: agent
     restart: always
     depends_on:
@@ -20,9 +14,9 @@ services:
     volumes:
       - ./config:/app/agent/config
     environment:
-      - VIRTUAL_HOST=YOUR_DOMAIN_FOR_VHOST
-      - LETSENCRYPT_HOST=YOUR_DOMAIN_FOR_LETSENCRYPT
-      - LETSENCRYPT_EMAIL=YOUR_EMAIL_FOR_LETSENCRYPT
+      - VIRTUAL_HOST=$NODE_HOSTNAME
+      - LETSENCRYPT_HOST=$NODE_HOSTNAME
+      - LETSENCRYPT_EMAIL=$OP_EMAIL
     command:
       - server
     networks:

@@ -4,6 +4,7 @@ services:
     extends:
       file: compose.agent.yml
       service: agent
+
   mysql:
     extends:
       file: compose.agent.yml
@@ -14,6 +15,11 @@ services:
       file: compose.orchestrator.yml
       service: orchestrator
 
+  mongodb:
+    extends:
+      file: compose.orchestrator.yml
+      service: mongodb
+
   dist-inf-client:
     image: ghcr.io/nesaorg/dist-inf/dist-inf-client:test
     container_name: dist-inf-client
@@ -21,7 +27,7 @@ services:
     depends_on:
       - dist-orc
     ports:
-      - "31333:31333"
+      - "31330:31330"
     networks:
       - nesa
   

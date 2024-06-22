@@ -1,13 +1,41 @@
 version: '3.8'
+
 services:
-  orchestrator:
-    image: ghcr.io/nesaorg/orchestrator/orchestrator:test
-    container_name: dist-orc
+  mongodb:
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    container_name: mongodb
     restart: always
-    depends_on:
-      - ipfs
-      - agent
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=nesa_user
+      - MONGO_INITDB_ROOT_PASSWORD=nesa_pass
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./data:/data/db
+    networks:
+      - nesa
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/nesa --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  orchestrator:
+    image: ghcr.io/nesaorg/orchestrator/orchestrator:latest
+    container_name: orchestrator
     ports:
       - "31333:31333"
+    depends_on:
+      mongodb:
+        condition: service_healthy
     networks:
-       - nesa 
+      - nesa
+    environment:
+      - MONGO_URI=mongodb://nesa_user:nesa_pass@mongodb:27017
+      - IS_DIST=$IS_DIST
+      - HUGGINGFACE_API_KEY=$HUGGINGFACE_API_KEY
+
+volumes:
+  mongodata:
+    driver: local
