@@ -21,11 +21,11 @@ services:
       service: mongodb
 
   dist-inf-client:
-    image: ghcr.io/nesaorg/dist-inf/dist-inf-client:test
-    container_name: dist-inf-client
+    image: ghcr.io/nesaorg/bsns/bsns-c:test
+    container_name: bsns-c
     restart: always
     depends_on:
-      - dist-orc
+      - orchestrator
     ports:
       - "31330:31330"
     networks:

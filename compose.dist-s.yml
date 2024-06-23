@@ -1,8 +1,8 @@
 version: '3.8'
 services:
   dist-inf-server:
-    image: ghcr.io/nesaorg/dist-inf/dist-inf-server:test
-    container_name: dist-inf-server
+    image: ghcr.io/nesaorg/bsns/bsns-s:test
+    container_name: bsns-s
     restart: always
     environment:
       - INITIAL_PEER=$INITIAL_PEER
