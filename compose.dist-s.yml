@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  dist-inf-server:
+  bsns-s:
     image: ghcr.io/nesaorg/bsns/bsns-s:test
     container_name: bsns-s
     restart: always

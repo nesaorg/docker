@@ -20,7 +20,7 @@ services:
       file: compose.orchestrator.yml
       service: mongodb
 
-  dist-inf-client:
+  bsns-c: 
     image: ghcr.io/nesaorg/bsns/bsns-c:test
     container_name: bsns-c
     restart: always
