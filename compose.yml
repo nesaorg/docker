@@ -4,7 +4,6 @@ services:
     image: ghcr.io/nesaorg/nesachain/nesachain:test
     container_name: nesachain
     restart: always
-    network_mode: host
     env_file: ../.env
     ports:
       - "26656:26656"
