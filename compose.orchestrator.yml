@@ -22,7 +22,7 @@ services:
       start_period: 40s
 
   orchestrator:
-    image: ghcr.io/nesaorg/orchestrator/orchestrator:latest
+    image: ghcr.io/nesaorg/orchestrator/orchestrator:test
     container_name: orchestrator
     ports:
       - "31333:31333"
