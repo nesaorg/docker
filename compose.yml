@@ -1,6 +1,6 @@
 services:
   chain:
-    image: ghcr.io/nesaorg/nesachain/nesachain:test
+    image: ghcr.io/nesaorg/nesachain:testnet-latest 
     container_name: nesachain
     restart: unless-stopped
     env_file:

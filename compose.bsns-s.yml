@@ -1,6 +1,6 @@
 services:
   bsns-s:
-    image: ghcr.io/nesaorg/bsns/bsns-s:test
+    image: ghcr.io/nesaorg/bsns-s:testnet-latest 
     container_name: bsns-s
     restart: unless-stopped
     env_file:
