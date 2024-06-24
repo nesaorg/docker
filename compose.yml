@@ -3,7 +3,8 @@ services:
     image: ghcr.io/nesaorg/nesachain/nesachain:test
     container_name: nesachain
     restart: unless-stopped
-    env_file: ../.env
+    env_file:
+      - ./env/base.env
     ports:
       - "26656:26656"
       - "26657:26657"

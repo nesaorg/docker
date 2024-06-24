@@ -3,6 +3,8 @@ services:
     image: ghcr.io/nesaorg/agent/agent:test
     container_name: agent
     restart: unless-stopped
+    env_file:
+      - ./env/agent.env
     depends_on:
       mysql:
         condition: service_healthy

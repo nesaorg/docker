@@ -29,11 +29,10 @@ services:
         condition: service_healthy
     networks:
       - nesa
+    env_file:
+      - ./env/orchestrator.env
     environment:
       - MONGO_URI=mongodb://nesa_user:nesa_pass@mongodb:27017
-      - IS_DIST=$IS_DIST
-      - HUGGINGFACE_API_KEY=$HUGGINGFACE_API_KEY
-
 volumes:
   mongodata:
     driver: local

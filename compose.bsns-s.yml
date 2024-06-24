@@ -3,8 +3,8 @@ services:
     image: ghcr.io/nesaorg/bsns/bsns-s:test
     container_name: bsns-s
     restart: unless-stopped
-    environment:
-      - INITIAL_PEER=$INITIAL_PEER
+    env_file:
+      - ./env/bsns-s.env
     ports:
       - "31331:31331"
     networks:
