@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   chain:
     image: ghcr.io/nesaorg/nesachain/nesachain:test

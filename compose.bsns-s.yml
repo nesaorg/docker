@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   bsns-s:
     image: ghcr.io/nesaorg/bsns/bsns-s:test
