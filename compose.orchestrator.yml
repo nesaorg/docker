@@ -4,7 +4,7 @@ services:
   mongodb:
     image: mongodb/mongodb-community-server:6.0-ubi8
     container_name: mongodb
-    restart: always
+    restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME=nesa_user
       - MONGO_INITDB_ROOT_PASSWORD=nesa_pass

@@ -23,7 +23,7 @@ services:
   bsns-c: 
     image: ghcr.io/nesaorg/bsns/bsns-c:test
     container_name: bsns-c
-    restart: always
+    restart: unless-stopped
     depends_on:
       - orchestrator
     ports:

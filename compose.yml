@@ -3,7 +3,7 @@ services:
   chain:
     image: ghcr.io/nesaorg/nesachain/nesachain:test
     container_name: nesachain
-    restart: always
+    restart: unless-stopped
     env_file: ../.env
     ports:
       - "26656:26656"
@@ -16,7 +16,7 @@ services:
       - nesa
   proxy:
     image: nginxproxy/nginx-proxy:alpine
-    restart: always
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
@@ -33,7 +33,7 @@ services:
       - nesa
   letsencrypt-companion:
     image: nginxproxy/acme-companion
-    restart: always
+    restart: unless-stopped
     volumes:
       - /srv/proxy-tier/certs:/etc/nginx/certs
       - /srv/proxy-tier/acme:/etc/acme.sh

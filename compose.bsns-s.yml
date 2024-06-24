@@ -3,7 +3,7 @@ services:
   bsns-s:
     image: ghcr.io/nesaorg/bsns/bsns-s:test
     container_name: bsns-s
-    restart: always
+    restart: unless-stopped
     environment:
       - INITIAL_PEER=$INITIAL_PEER
     ports:
