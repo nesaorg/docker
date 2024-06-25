@@ -15,9 +15,9 @@ services:
     volumes:
       - ./config:/app/agent/config
     environment:
-      - VIRTUAL_HOST=$NODE_HOSTNAME
-      - LETSENCRYPT_HOST=$NODE_HOSTNAME
-      - LETSENCRYPT_EMAIL=$OP_EMAIL
+      - VIRTUAL_HOST=$VIRTUAL_HOST
+      - LETSENCRYPT_HOST=$LETSENCRYPT_HOST
+      - LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL
     command:
       - server
     networks:
