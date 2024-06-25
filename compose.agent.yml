@@ -14,10 +14,6 @@ services:
       - "8000:8000"
     volumes:
       - ./config:/app/agent/config
-    environment:
-      - VIRTUAL_HOST=$VIRTUAL_HOST
-      - LETSENCRYPT_HOST=$LETSENCRYPT_HOST
-      - LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL
     command:
       - server
     networks:
