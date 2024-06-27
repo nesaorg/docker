@@ -23,10 +23,14 @@ services:
     image: ghcr.io/nesaorg/bsns-c:testnet-latest
     container_name: bsns-c
     restart: unless-stopped
+    volumes:
+      - identity:/identity
     depends_on:
       - orchestrator
     ports:
       - "31330:31330"
     networks:
       - nesa
-  
+
+volumes:
+  identity: 
