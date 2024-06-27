@@ -48,6 +48,7 @@ services:
   ipfs:
     image: ipfs/kubo:latest
     container_name: ipfs_node
+    command: ["daemon", "--enable-pubsub-experiment", "--bootstraps /dns4/2.tcp.ngrok.io/tcp/19093/p2p/12D3KooWRDMhmSSCFvbieLXGX8JA7Wxmt5r8kvm7FHLJkUFJtMRW"]
     ports:
       - "4001:4001"
       - "5001:5001"
@@ -55,16 +56,7 @@ services:
     volumes:
       - ipfs-data:/data/ipfs 
       - ipfs-staging:/export
-      - ./scripts/update_peers.sh:/update_peers.sh
-    entrypoint: >
-      sh -c "
-      chmod +x /update_peers.sh &&
-      ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001 && 
-      ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080 && 
-      ipfs config Addresses.Swarm --json '[\"/ip4/0.0.0.0/tcp/4001\", \"/ip6/::/tcp/4001\"]' &&
-      ipfs config --json Pubsub.Router gossipsub &&
-      ipfs daemon --init
-      "
+      - ./scripts/001_config_and_sub.sh:/container-init.d/001_config_and_sub.sh
     networks:
       - nesa
 
