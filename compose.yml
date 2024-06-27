@@ -48,7 +48,7 @@ services:
   ipfs:
     image: ipfs/kubo:latest
     container_name: ipfs_node
-    command: ["daemon", "--enable-pubsub-experiment", "--bootstraps /dns4/2.tcp.ngrok.io/tcp/19093/p2p/12D3KooWRDMhmSSCFvbieLXGX8JA7Wxmt5r8kvm7FHLJkUFJtMRW"]
+    command: ["daemon", "--enable-pubsub-experiment"]
     ports:
       - "4001:4001"
       - "5001:5001"

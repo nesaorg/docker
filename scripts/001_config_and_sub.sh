@@ -1,8 +1,10 @@
 #!/bin/sh
 set -x
 
-# TOPIC="nesa-peer-list"
-TOPIC="/dns4/2.tcp.ngrok.io/tcp/19093/p2p/12D3KooWRDMhmSSCFvbieLXGX8JA7Wxmt5r8kvm7FHLJkUFJtMRW"
+TOPIC="nesa-peer-list"
+
+ipfs bootstrap rm all
+ipfs bootstrap add "/dns4/2.tcp.ngrok.io/tcp/19093/p2p/12D3KooWRDMhmSSCFvbieLXGX8JA7Wxmt5r8kvm7FHLJkUFJtMRW"
 ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
 ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
 ipfs config Addresses.Swarm --json '["/ip4/0.0.0.0/tcp/4001", "/ip6/::/tcp/4001"]'
