@@ -13,7 +13,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./config:/app/agent/config
+      - agent-config:/app/config
     command:
       - server
     networks:
@@ -38,3 +38,4 @@ services:
       - nesa
 volumes:
   mysql-data:
+  agent-config:
