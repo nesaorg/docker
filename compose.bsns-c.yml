@@ -1,4 +1,8 @@
 services:
+  ipfs:
+    extends:
+      file: compose.ipfs.yml
+      service: ipfs
   agent:
     extends:
       file: compose.agent.yml
@@ -33,4 +37,11 @@ services:
       - nesa
 
 volumes:
-  identity: 
+  identity:
+  ipfs-data:
+  ipfs-staging:
+  mongodata:
+
+networks:
+  nesa:
+    driver: bridge

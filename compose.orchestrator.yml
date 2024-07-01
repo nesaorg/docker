@@ -1,4 +1,8 @@
 services:
+  ipfs:
+    extends:
+      file: compose.ipfs.yml
+      service: ipfs
   mongodb:
     image: mongodb/mongodb-community-server:6.0-ubi8
     container_name: mongodb
@@ -33,6 +37,13 @@ services:
       - ./env/orchestrator.env
     environment:
       - MONGO_URI=mongodb://nesa_user:nesa_pass@mongodb:27017
+
+
 volumes:
   mongodata:
-    driver: local
+  ipfs-data:
+  ipfs-staging:
+
+networks:
+  nesa:
+    driver: bridge

@@ -1,4 +1,8 @@
 services:
+  ipfs:
+    extends:
+      file: compose.ipfs.yml
+      service: ipfs
   agent:
     image: ghcr.io/nesaorg/agent:testnet-latest
     container_name: agent
@@ -36,6 +40,13 @@ services:
       - mysql-data:/var/lib/mysql
     networks:
       - nesa
+
 volumes:
+  ipfs-data:
+  ipfs-staging:
   mysql-data:
   agent-config:
+
+networks:
+  nesa:
+    driver: bridge

@@ -1,4 +1,8 @@
 services:
+  ipfs:
+    extends:
+      file: compose.ipfs.yml
+      service: ipfs
   bsns-s:
     image: ghcr.io/nesaorg/bsns-s:testnet-latest 
     container_name: bsns-s
@@ -9,3 +13,11 @@ services:
       - "31331:31331"
     networks:
       - nesa
+
+volumes:
+  ipfs-data:
+  ipfs-staging:
+
+networks:
+  nesa:
+    driver: bridge

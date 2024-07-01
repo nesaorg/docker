@@ -1,4 +1,8 @@
 services:
+  ipfs:
+    extends:
+      file: compose.ipfs.yml
+      service: ipfs
   agent:
     extends:
       file: compose.agent.yml
@@ -15,3 +19,15 @@ services:
     extends:
       file: compose.orchestrator.yml
       service: mongodb
+
+
+volumes:
+  ipfs-data:
+  ipfs-staging:
+  mysql-data:
+  agent-config:
+  mongodata:
+
+networks:
+  nesa:
+    driver: bridge
