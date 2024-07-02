@@ -27,6 +27,8 @@ services:
     image: ghcr.io/nesaorg/bsns-c:testnet-latest
     container_name: bsns-c
     restart: unless-stopped
+    env_file:
+      - ./env/bsns-c.env
     volumes:
       - identity:/identity
     depends_on:
