@@ -41,6 +41,8 @@ volumes:
   ipfs-data:
   ipfs-staging:
   mongodata:
+  mysql-data:
+  agent-config:
 
 networks:
   nesa:
