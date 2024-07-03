@@ -26,6 +26,13 @@ services:
   orchestrator:
     image: ghcr.io/nesaorg/orchestrator:testnet-latest
     container_name: orchestrator
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     ports:
       - "31333:31333"
     depends_on:
