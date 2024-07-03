@@ -18,6 +18,9 @@ services:
       file: compose.orchestrator.yml
       service: orchestrator
 
+    depends_on:
+      - bsns-c
+
   mongodb:
     extends:
       file: compose.orchestrator.yml
@@ -31,8 +34,6 @@ services:
       - ./env/bsns-c.env
     volumes:
       - identity:/identity
-    depends_on:
-      - orchestrator
     ports:
       - "31330:31330"
     networks:
