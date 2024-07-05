@@ -16,6 +16,8 @@ services:
     restart: unless-stopped
     env_file:
       - ./env/bsns-s.env
+    volumes:
+      - identity:/identity
     ports:
       - "31331:31331"
     networks:
