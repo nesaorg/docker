@@ -24,6 +24,7 @@ services:
       - nesa
 
 volumes:
+  identity:
   ipfs-data:
   ipfs-staging:
 
