@@ -6,13 +6,6 @@ services:
   bsns-s:
     image: ghcr.io/nesaorg/bsns-s:testnet-latest 
     container_name: bsns-s
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
     restart: unless-stopped
     env_file:
       - ./env/bsns-s.env
