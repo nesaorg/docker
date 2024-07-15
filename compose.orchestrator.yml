@@ -39,6 +39,7 @@ services:
       - MONGO_URI=mongodb://nesa_user:nesa_pass@mongodb:27017
     volumes:
       - ${HOME}/.nesa/cache:/root/.cache
+      - ./logs:/orchestrator/dist/logs
      
 
 volumes:

@@ -5,7 +5,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-
     labels:
       com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
     volumes:
@@ -13,7 +12,6 @@ services:
       - /srv/proxy-tier/vhost.d:/etc/nginx/vhost.d
       - /srv/proxy-tier/html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
-
     networks:
       - nesa
   letsencrypt-companion:
@@ -29,7 +27,27 @@ services:
       - proxy
     networks:
       - nesa
- 
+  fluent-bit:
+    image: fluent/fluent-bit
+    volumes:
+      - ./config/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./logs:/app/logs
+      - ./config/aggregate.lua:/fluent-bit/etc/aggregate.lua
+      - ./config/parser.conf:/fluent-bit/etc/parser.conf
+      - ./.logs:/fluent-bit/etc/logs
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+    ports:
+      - 2020:2020
+      - 2021:2021
+    networks:
+      - nesa
+    env_file:
+      - ./env/fluentbit.env
 networks:
   nesa:
     driver: bridge
