@@ -1,0 +1,51 @@
+services:
+  ipfs:
+    extends:
+      file: compose.ipfs.yml
+      service: ipfs
+  agent:
+    extends:
+      file: compose.agent.yml
+      service: agent
+
+  mysql:
+    extends:
+      file: compose.agent.yml
+      service: mysql
+
+  orchestrator:
+    extends:
+      file: compose.orchestrator.yml
+      service: orchestrator
+
+    depends_on:
+      - bsns-c
+
+  mongodb:
+    extends:
+      file: compose.orchestrator.yml
+      service: mongodb
+
+  bsns-c:
+    extends:
+      file: compose.bsns-c.yml
+      service: bsns-c
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  identity:
+  ipfs-data:
+  ipfs-staging:
+  mongodata:
+  mysql-data:
+  agent-config:
+
+networks:
+  nesa:
+    driver: bridge
