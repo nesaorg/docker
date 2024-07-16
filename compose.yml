@@ -26,7 +26,6 @@ services:
     depends_on:
       - proxy
     networks:
-<<<<<<< Updated upstream
       - nesa
   fluent-bit:
     image: fluent/fluent-bit
@@ -49,7 +48,6 @@ services:
       - nesa
     env_file:
       - ./env/fluentbit.env
-=======
       - nesa 
   watchtower:
     image: containrrr/watchtower
@@ -58,7 +56,6 @@ services:
     environment:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_POLL_INTERVAL=300 
->>>>>>> Stashed changes
 networks:
   nesa:
     driver: bridge
