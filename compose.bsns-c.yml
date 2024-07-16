@@ -31,6 +31,7 @@ services:
     container_name: bsns-c
     restart: unless-stopped
     env_file:
+      - ./env/base.env
       - ./env/bsns-c.env
     volumes:
       - identity:/identity

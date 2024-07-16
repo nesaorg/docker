@@ -34,6 +34,7 @@ services:
     networks:
       - nesa
     env_file:
+      - ./env/base.env
       - ./env/orchestrator.env
     environment:
       - MONGO_URI=mongodb://nesa_user:nesa_pass@mongodb:27017

@@ -47,7 +47,7 @@ services:
     networks:
       - nesa
     env_file:
-      - ./env/fluentbit.env
+      - ./env/base.env
   watchtower:
     image: containrrr/watchtower
     volumes:

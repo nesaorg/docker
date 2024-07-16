@@ -8,6 +8,7 @@ services:
     container_name: agent
     restart: unless-stopped
     env_file:
+      - ./env/base.env
       - ./env/agent.env
     depends_on:
       mysql:
