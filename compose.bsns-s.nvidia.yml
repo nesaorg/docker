@@ -7,8 +7,6 @@ services:
     extends:
       file: compose.bsns-s.yml
       service: bsns-s
-    ports:
-      - "31331:31331"
     deploy:
       resources:
         reservations:
