@@ -27,7 +27,7 @@ services:
     image: ghcr.io/nesaorg/orchestrator:testnet-latest
     container_name: orchestrator
     ports:
-      - "31333:8000"
+      - "31333:31333"
     depends_on:
       mongodb:
         condition: service_healthy
