@@ -2,6 +2,7 @@ services:
   ipfs:
     image: ipfs/kubo:latest
     container_name: ipfs_node
+    restart: unless-stopped
     command: ["daemon", "--enable-pubsub-experiment"]
     ports:
       - "4001:4001"
