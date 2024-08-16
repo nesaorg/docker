@@ -3,28 +3,8 @@ services:
     extends:
       file: compose.ipfs.yml
       service: ipfs
-  mongodb:
-    image: mongodb/mongodb-community-server:6.0-ubi8
-    container_name: mongodb
-    restart: unless-stopped
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=nesa_user
-      - MONGO_INITDB_ROOT_PASSWORD=nesa_pass
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongodata:/data/db
-    networks:
-      - nesa
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/nesa --quiet
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
-
   orchestrator:
-    image: ghcr.io/nesaorg/orchestrator:testnet-latest
+    image: ghcr.io/nesaorg/orchestrator:devnet-latest
     container_name: orchestrator
     restart: unless-stopped
     ports:
@@ -43,13 +23,16 @@ services:
       - ${HOME}/.nesa/cache:/root/.cache
       - ./logs:/orchestrator/dist/logs
       - identity:/identity
-     
+  mongodb:
+    extends:
+      file: compose.orchestrator.yml
+      service: mongodb
+
 
 volumes:
-  mongodata:
   ipfs-data:
   ipfs-staging:
-  identity:
+  mongodata:
 
 networks:
   nesa:

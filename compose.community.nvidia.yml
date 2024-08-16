@@ -1,0 +1,30 @@
+services:
+  ipfs:
+    extends:
+      file: compose.ipfs.yml
+      service: ipfs
+  orchestrator:
+    extends:
+      file: compose.community.yml
+      service: orchestrator
+    deploy:
+        resources:
+          reservations:
+            devices:
+              - driver: nvidia
+                count: all
+                capabilities: [gpu]
+  mongodb:
+    extends:
+      file: compose.orchestrator.yml
+      service: mongodb
+
+
+volumes:
+  ipfs-data:
+  ipfs-staging:
+  mongodata:
+
+networks:
+  nesa:
+    driver: bridge
