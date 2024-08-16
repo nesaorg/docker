@@ -33,6 +33,7 @@ volumes:
   ipfs-data:
   ipfs-staging:
   mongodata:
+  identity:
 
 networks:
   nesa:
