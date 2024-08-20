@@ -26,9 +26,20 @@ services:
   mongodb:
     extends:
       file: compose.orchestrator.yml
-      service: mongodb
-
-
+      service: mongodb 
+  watchtower:
+    image: containrrr/watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=300 
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+      - WATCHTOWER_INCLUDE_STOPPED=true
+      - WATCHTOWER_REVIVE_STOPPED=true
+      - WATCHTOWER_DISABLE_CONTAINERS=nesachain,mongodb,fluent-bit,ipfs,mysql
+      
 volumes:
   ipfs-data:
   ipfs-staging:

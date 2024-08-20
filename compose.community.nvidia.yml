@@ -1,7 +1,7 @@
 services:
   ipfs:
     extends:
-      file: compose.ipfs.yml
+      file: compose.community.yml
       service: ipfs
   orchestrator:
     extends:
@@ -16,9 +16,12 @@ services:
                 capabilities: [gpu]
   mongodb:
     extends:
-      file: compose.orchestrator.yml
+      file: compose.community.yml
       service: mongodb
-
+  watchtower:
+    extends:
+      file: compose.community.yml
+      service: watchtower
 
 volumes:
   ipfs-data:
