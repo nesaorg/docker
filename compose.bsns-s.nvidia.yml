@@ -16,7 +16,6 @@ services:
               capabilities: [gpu]
 
 volumes:
-  identity:
   ipfs-data:
   ipfs-staging:
 

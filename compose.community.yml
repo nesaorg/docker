@@ -4,47 +4,22 @@ services:
       file: compose.ipfs.yml
       service: ipfs
   orchestrator:
-    image: ghcr.io/nesaorg/orchestrator:devnet-latest
-    container_name: orchestrator
-    restart: unless-stopped
-    ports:
-      - "31333:31333"
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    networks:
-      - nesa
-    env_file:
-      - ./env/base.env
-      - ./env/orchestrator.env
-    environment:
-      - MONGO_URI=mongodb://nesa_user:nesa_pass@mongodb:27017
-    volumes:
-      - ${HOME}/.nesa/cache:/root/.cache
-      - ./logs:/orchestrator/dist/logs
-      - identity:/identity
+    extends:
+      file: compose.orchestrator.yml
+      service: orchestrator
   mongodb:
     extends:
       file: compose.orchestrator.yml
       service: mongodb 
   watchtower:
-    image: containrrr/watchtower
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=300 
-      - WATCHTOWER_INCLUDE_RESTARTING=true
-      - WATCHTOWER_INCLUDE_STOPPED=true
-      - WATCHTOWER_REVIVE_STOPPED=true
-      - WATCHTOWER_DISABLE_CONTAINERS=nesachain,mongodb,fluent-bit,ipfs,mysql
+    extends:
+      file: compose.yml
+      service: watchtower
       
 volumes:
   ipfs-data:
   ipfs-staging:
   mongodata:
-  identity:
 
 networks:
   nesa:

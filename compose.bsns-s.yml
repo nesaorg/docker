@@ -11,14 +11,13 @@ services:
       - ./env/base.env
       - ./env/bsns-s.env
     volumes:
-      - identity:/identity
+      - ${HOME}/.nesa/identity:/identity 
     ports:
       - "31331:31331"
     networks:
       - nesa
 
 volumes:
-  identity:
   ipfs-data:
   ipfs-staging:
 

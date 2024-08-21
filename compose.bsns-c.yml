@@ -34,14 +34,13 @@ services:
       - ./env/base.env
       - ./env/bsns-c.env
     volumes:
-      - identity:/identity
+      - ${HOME}/.nesa/identity:/identity
     ports:
       - "31330:31330"
     networks:
       - nesa
 
 volumes:
-  identity:
   ipfs-data:
   ipfs-staging:
   mongodata:

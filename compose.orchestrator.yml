@@ -42,14 +42,14 @@ services:
     volumes:
       - ${HOME}/.nesa/cache:/root/.cache
       - ./logs:/orchestrator/dist/logs
-      - identity:/identity
+      - ${HOME}/.nesa/identity:/identity
+      
      
 
 volumes:
   mongodata:
   ipfs-data:
   ipfs-staging:
-  identity:
 
 networks:
   nesa:

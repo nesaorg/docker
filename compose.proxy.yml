@@ -1,0 +1,29 @@
+services: 
+  proxy:
+    image: nginxproxy/nginx-proxy:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    labels:
+      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
+    volumes:
+      - /srv/proxy-tier/certs:/etc/nginx/certs:ro
+      - /srv/proxy-tier/vhost.d:/etc/nginx/vhost.d
+      - /srv/proxy-tier/html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - nesa
+  letsencrypt-companion:
+    image: nginxproxy/acme-companion
+    restart: unless-stopped
+    volumes:
+      - /srv/proxy-tier/certs:/etc/nginx/certs
+      - /srv/proxy-tier/acme:/etc/acme.sh
+      - /srv/proxy-tier/vhost.d:/etc/nginx/vhost.d
+      - /srv/proxy-tier/html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - proxy
+    networks:
+      - nesa

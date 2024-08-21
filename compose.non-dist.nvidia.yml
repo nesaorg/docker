@@ -34,7 +34,6 @@ volumes:
   mysql-data:
   agent-config:
   mongodata:
-  identity:
 
 networks:
   nesa:
