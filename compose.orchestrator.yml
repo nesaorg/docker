@@ -11,7 +11,7 @@ services:
       - MONGODB_INITDB_ROOT_USERNAME=nesa_user
       - MONGODB_INITDB_ROOT_PASSWORD=nesa_pass
     ports:
-      - '27017:27017'
+      - "27017:27017"
     volumes:
       - mongodata:/data/db
     networks:
@@ -27,8 +27,6 @@ services:
     image: ghcr.io/nesaorg/orchestrator:testnet-latest
     container_name: orchestrator
     restart: unless-stopped
-    ports:
-      - "31333:31333"
     depends_on:
       mongodb:
         condition: service_healthy
@@ -42,9 +40,7 @@ services:
     volumes:
       - ${HOME}/.nesa/cache:/root/.cache
       - ./logs:/orchestrator/dist/logs
-      - ${HOME}/.nesa/identity:/identity
-      
-     
+      - ${HOME}/.nesa/identity:/orchestrator/dist/.identity
 
 volumes:
   mongodata:

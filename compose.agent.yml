@@ -39,6 +39,7 @@ services:
       retries: 10
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./config/mysql:/etc/mysql/conf.d 
     networks:
       - nesa
 

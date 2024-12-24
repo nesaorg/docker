@@ -1,32 +1,4 @@
-services: 
-  proxy:
-    image: nginxproxy/nginx-proxy:alpine
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    labels:
-      com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
-    volumes:
-      - /srv/proxy-tier/certs:/etc/nginx/certs:ro
-      - /srv/proxy-tier/vhost.d:/etc/nginx/vhost.d
-      - /srv/proxy-tier/html:/usr/share/nginx/html
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-    networks:
-      - nesa
-  letsencrypt-companion:
-    image: nginxproxy/acme-companion
-    restart: unless-stopped
-    volumes:
-      - /srv/proxy-tier/certs:/etc/nginx/certs
-      - /srv/proxy-tier/acme:/etc/acme.sh
-      - /srv/proxy-tier/vhost.d:/etc/nginx/vhost.d
-      - /srv/proxy-tier/html:/usr/share/nginx/html
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    depends_on:
-      - proxy
-    networks:
-      - nesa
+services:
   fluent-bit:
     image: fluent/fluent-bit
     volumes:
@@ -55,7 +27,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=300 
+      - WATCHTOWER_POLL_INTERVAL=300
       - WATCHTOWER_INCLUDE_RESTARTING=true
       - WATCHTOWER_INCLUDE_STOPPED=true
       - WATCHTOWER_REVIVE_STOPPED=true

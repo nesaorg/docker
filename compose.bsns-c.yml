@@ -3,15 +3,6 @@ services:
     extends:
       file: compose.ipfs.yml
       service: ipfs
-  agent:
-    extends:
-      file: compose.agent.yml
-      service: agent
-
-  mysql:
-    extends:
-      file: compose.agent.yml
-      service: mysql
 
   orchestrator:
     extends:
@@ -26,7 +17,7 @@ services:
       file: compose.orchestrator.yml
       service: mongodb
 
-  bsns-c: 
+  bsns-c:
     image: ghcr.io/nesaorg/bsns-c:testnet-latest
     container_name: bsns-c
     restart: unless-stopped
