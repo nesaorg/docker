@@ -12,11 +12,6 @@ services:
     depends_on:
       - bsns-c
 
-  mongodb:
-    extends:
-      file: compose.orchestrator.yml
-      service: mongodb
-
   bsns-c:
     extends:
       file: compose.bsns-c.yml
@@ -33,7 +28,6 @@ volumes:
   identity:
   ipfs-data:
   ipfs-staging:
-  mongodata:
 
 networks:
   nesa:

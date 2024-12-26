@@ -12,11 +12,6 @@ services:
     depends_on:
       - bsns-c
 
-  mongodb:
-    extends:
-      file: compose.orchestrator.yml
-      service: mongodb
-
   bsns-c:
     image: ghcr.io/nesaorg/bsns-c:testnet-latest
     container_name: bsns-c
@@ -34,7 +29,6 @@ services:
 volumes:
   ipfs-data:
   ipfs-staging:
-  mongodata:
   mysql-data:
   agent-config:
 

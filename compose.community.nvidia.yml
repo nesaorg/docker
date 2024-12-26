@@ -8,16 +8,12 @@ services:
       file: compose.community.yml
       service: orchestrator
     deploy:
-        resources:
-          reservations:
-            devices:
-              - driver: nvidia
-                count: all
-                capabilities: [gpu]
-  mongodb:
-    extends:
-      file: compose.community.yml
-      service: mongodb
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
   watchtower:
     extends:
       file: compose.community.yml
@@ -26,7 +22,6 @@ services:
 volumes:
   ipfs-data:
   ipfs-staging:
-  mongodata:
 
 networks:
   nesa:

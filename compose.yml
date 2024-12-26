@@ -31,7 +31,7 @@ services:
       - WATCHTOWER_INCLUDE_RESTARTING=true
       - WATCHTOWER_INCLUDE_STOPPED=true
       - WATCHTOWER_REVIVE_STOPPED=true
-      - WATCHTOWER_DISABLE_CONTAINERS=nesachain,mongodb,fluent-bit,ipfs,mysql
+      - WATCHTOWER_DISABLE_CONTAINERS=nesachain,fluent-bit,ipfs
 networks:
   nesa:
     driver: bridge

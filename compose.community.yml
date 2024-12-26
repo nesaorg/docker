@@ -8,19 +8,14 @@ services:
       file: compose.orchestrator.yml
       service: orchestrator
     image: ghcr.io/nesaorg/orchestrator:devnet-latest
-  mongodb:
-    extends:
-      file: compose.orchestrator.yml
-      service: mongodb 
   watchtower:
     extends:
       file: compose.yml
       service: watchtower
-      
+
 volumes:
   ipfs-data:
   ipfs-staging:
-  mongodata:
 
 networks:
   nesa:
