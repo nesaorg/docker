@@ -15,7 +15,7 @@ services:
     volumes:
       - ${HOME}/.nesa/cache:/root/.cache
       - ./logs:/orchestrator/dist/logs
-      - ${HOME}/.nesa/identity:/orchestrator/dist/.identity
+      - ${HOME}/.nesa/identity:${HOME}/.nesa/identity
 
 volumes:
   ipfs-data:
