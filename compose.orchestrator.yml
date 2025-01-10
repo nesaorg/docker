@@ -12,10 +12,13 @@ services:
     env_file:
       - ./env/base.env
       - ./env/orchestrator.env
+    environment:
+      PsUTIL_PROCFS_PATH: /host_proc
     volumes:
       - ${HOME}/.nesa/cache:/root/.cache
       - ./logs:/orchestrator/dist/logs
-      - ${HOME}/.nesa/identity:${HOME}/.nesa/identity
+      - ${HOME}/.nesa/identity:/root/.nesa/identity
+      - /proc:/host_proc:ro
 
 volumes:
   ipfs-data:
