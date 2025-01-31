@@ -1,28 +1,20 @@
 services:
-  ipfs:
-    extends:
-      file: compose.community.yml
-      service: ipfs
-  orchestrator:
-    extends:
-      file: compose.community.yml
-      service: orchestrator
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-  watchtower:
-    extends:
-      file: compose.community.yml
-      service: watchtower
-
-volumes:
-  ipfs-data:
-  ipfs-staging:
+    orchestrator:
+        extends:
+            file: compose.community.yml
+            service: orchestrator
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: all
+                          capabilities: [gpu]
+    watchtower:
+        extends:
+            file: compose.community.yml
+            service: watchtower
 
 networks:
-  nesa:
-    driver: bridge
+    nesa:
+        driver: bridge

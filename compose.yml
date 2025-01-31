@@ -1,37 +1,33 @@
 services:
-  fluent-bit:
-    image: fluent/fluent-bit
-    volumes:
-      - ./config/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
-      - ./logs:/app/logs
-      - ./config/aggregate.lua:/fluent-bit/etc/aggregate.lua
-      - ./config/parser.conf:/fluent-bit/etc/parser.conf
-      - ./.logs:/fluent-bit/etc/logs
-    restart: unless-stopped
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "200m"
-        max-file: "10"
-    ports:
-      - 2020:2020
-      - 2021:2021
-    networks:
-      - nesa
-    env_file:
-      - ./env/base.env
-  watchtower:
-    image: containrrr/watchtower
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=300
-      - WATCHTOWER_INCLUDE_RESTARTING=true
-      - WATCHTOWER_INCLUDE_STOPPED=true
-      - WATCHTOWER_REVIVE_STOPPED=true
-      - WATCHTOWER_DISABLE_CONTAINERS=nesachain,fluent-bit,ipfs
+    orchestrator:
+        image: ghcr.io/nesaorg/orchestrator:testnet-latest
+        container_name: orchestrator
+        restart: unless-stopped
+        networks:
+            - nesa
+        env_file:
+            - ./env/base.env
+            - ./env/orchestrator.env
+        environment:
+            PSUTIL_PROCFS_PATH: /host_proc
+        volumes:
+            - ${HOME}/.nesa/cache:/root/.cache
+            - ./logs:/orchestrator/dist/logs
+            - ${HOME}/.nesa/identity:/root/.nesa/identity
+            - /proc:/host_proc:ro
+
+    watchtower:
+        image: containrrr/watchtower
+        restart: unless-stopped
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        environment:
+            - WATCHTOWER_CLEANUP=true
+            - WATCHTOWER_POLL_INTERVAL=300
+            - WATCHTOWER_INCLUDE_RESTARTING=true
+            - WATCHTOWER_INCLUDE_STOPPED=true
+            - WATCHTOWER_REVIVE_STOPPED=true
+            - WATCHTOWER_DISABLE_CONTAINERS=nesachain,fluent-bit,ipfs
 networks:
-  nesa:
-    driver: bridge
+    nesa:
+        driver: bridge
