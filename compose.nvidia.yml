@@ -3,7 +3,13 @@ services:
         extends:
             file: compose.yml
             service: orchestrator
-        image: ghcr.io/nesaorg/orchestrator:devnet-latest
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                        - driver: nvidia
+                          count: all
+                          capabilities: [gpu]
     watchtower:
         extends:
             file: compose.yml
