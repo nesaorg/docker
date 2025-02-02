@@ -12,7 +12,6 @@ services:
             PSUTIL_PROCFS_PATH: /host_proc
         volumes:
             - ${HOME}/.nesa/cache:/root/.cache
-            - ./logs:/orchestrator/dist/logs
             - ${HOME}/.nesa/identity:/root/.nesa/identity
             - /proc:/host_proc:ro
 
@@ -27,7 +26,7 @@ services:
             - WATCHTOWER_INCLUDE_RESTARTING=true
             - WATCHTOWER_INCLUDE_STOPPED=true
             - WATCHTOWER_REVIVE_STOPPED=true
-            - WATCHTOWER_DISABLE_CONTAINERS=nesachain,fluent-bit,ipfs
+            - WATCHTOWER_DISABLE_CONTAINERS=nesachain
 networks:
     nesa:
         driver: bridge
