@@ -7,7 +7,7 @@ services:
     container_name: log-signer
     restart: unless-stopped
     environment:
-      INGEST_URL: https://logs.nesa.ai/ingest   
+      INGEST_URL: http://localhost:8080/ingest 
       MONIKER: ${MONIKER}
       NODE_ID: ${NODE_ID}
       PUBLIC_IP: ${PUBLIC_IP}
