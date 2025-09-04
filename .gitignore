@@ -1,2 +1,5 @@
 env
 logs/api.json
+*.swp
+*.swo
+*.un~

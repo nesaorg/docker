@@ -1,32 +1,44 @@
-services:
-    orchestrator:
-        image: ghcr.io/nesaorg/orchestrator:testnet-latest
-        container_name: orchestrator
-        restart: unless-stopped
-        networks:
-            - nesa
-        env_file:
-            - ./env/base.env
-            - ./env/orchestrator.env
-        environment:
-            PSUTIL_PROCFS_PATH: /host_proc
-        volumes:
-            - ${HOME}/.nesa/cache:/root/.cache
-            - ${HOME}/.nesa/identity:/root/.nesa/identity
-            - /proc:/host_proc:ro
 
-    watchtower:
-        image: containrrr/watchtower
-        restart: unless-stopped
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-        environment:
-            - WATCHTOWER_CLEANUP=true
-            - WATCHTOWER_POLL_INTERVAL=300
-            - WATCHTOWER_INCLUDE_RESTARTING=true
-            - WATCHTOWER_INCLUDE_STOPPED=true
-            - WATCHTOWER_REVIVE_STOPPED=true
-            - WATCHTOWER_DISABLE_CONTAINERS=nesachain
+services:
+  orchestrator:
+    image: ghcr.io/nesaorg/orchestrator:testnet-latest
+    container_name: orchestrator
+    restart: unless-stopped
+    networks: [ nesa ]
+    env_file:
+      - ./env/base.env
+      - ./env/orchestrator.env
+    environment:
+      PSUTIL_PROCFS_PATH: /host_proc
+    volumes:
+      - ${HOME}/.nesa/cache:/root/.cache
+      - ${HOME}/.nesa/identity:/root/.nesa/identity
+      - /proc:/host_proc:ro
+    labels:
+      - "nesa.component=orchestrator"
+      - "nesa.node_id=${NODE_ID}"
+      - "nesa.moniker=${MONIKER}"
+      - "nesa.public_ip=${PUBLIC_IP}"
+      - "nesa.chain_id=${CHAIN_ID}"
+
+  watchtower:
+    image: containrrr/watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=300
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+      - WATCHTOWER_INCLUDE_STOPPED=true
+      - WATCHTOWER_REVIVE_STOPPED=true
+      - WATCHTOWER_DISABLE_CONTAINERS=nesachain
+    labels:
+      - "nesa.component=watchtower"
+      - "nesa.node_id=${NODE_ID}"
+      - "nesa.moniker=${MONIKER}"
+      - "nesa.public_ip=${PUBLIC_IP}"
+      - "nesa.chain_id=${CHAIN_ID}"
+
 networks:
-    nesa:
-        driver: bridge
+  nesa: { driver: bridge }
