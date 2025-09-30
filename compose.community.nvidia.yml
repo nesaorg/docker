@@ -14,7 +14,6 @@ services:
         extends:
             file: compose.community.yml
             service: watchtower
-
 networks:
     nesa:
         driver: bridge

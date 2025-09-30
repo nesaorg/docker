@@ -1,59 +1,58 @@
-# compose.logs.yml
+
 version: "3.9"
 
 services:
   log-signer:
-    image: ghcr.io/nesaorg/log-signer:latest   
+    image: ghcr.io/nesaorg/devsigner:latest
     container_name: log-signer
     restart: unless-stopped
+    networks: [nesa]
     environment:
-      INGEST_URL: http://localhost:8080/ingest 
-      MONIKER: ${MONIKER}
+      PRIV_HEX: ${NODE_PRIV_KEY}
       NODE_ID: ${NODE_ID}
+      MONIKER: ${MONIKER}
       PUBLIC_IP: ${PUBLIC_IP}
-      SEQ_STATE: /data/seq.sqlite
-      BATCH_BYTES: "1048576"        
-      BATCH_INTERVAL_MS: "2000"
-      MAX_RETRY_BACKOFF_S: "60"
-    volumes:
-      - ./env:/env:ro
-      - logsigner-data:/data
-    secrets:
-      - node_priv_key
-    ports:
-      - "127.0.0.1:8787:8787"       
+      CHAIN_ID: ${CHAIN_ID}
+      NEXT_URL: ${INGEST_URL}
+      LISTEN_ADDR: ":9000"
+    command:
+      [
+        "serve",
+        "-listen", "${LISTEN_ADDR:-:9000}",
+        "-next", "${NEXT_URL}",
+        "-priv", "${PRIV_HEX}",
+        "-node-id", "${NODE_ID}",
+        "-moniker", "${MONIKER}",
+        "-public-ip", "${PUBLIC_IP}"
+      ]
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8787/healthz"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:9000/healthz"]
       interval: 10s
       timeout: 2s
-      retries: 12
+      retries: 10
 
   log-collector:
     image: cr.fluentbit.io/fluent/fluent-bit:2.2
     container_name: log-collector
     restart: unless-stopped
     depends_on:
-      - log-signer
+      log-signer:
+        condition: service_healthy
+    networks: [nesa]
+    user: root
     environment:
-      MONIKER: ${MONIKER}
       NODE_ID: ${NODE_ID}
+      MONIKER: ${MONIKER}
       PUBLIC_IP: ${PUBLIC_IP}
+      CHAIN_ID: ${CHAIN_ID}
     volumes:
-      # Docker JSON logs
+      - ${HOME}/.nesa/logs:/mnt/nesa/logs:ro
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      # Docker API to fetch labels and container metadata
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      # Bootstrap installer log (created by bootstrap.sh)
-      - ${HOME}/.nesa/logs:/host-logs:ro
-      # Fluent Bit configs
       - ./logging/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - ./logging/parsers.conf:/fluent-bit/etc/parsers.conf:ro
-    command: ["/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit/etc/fluent-bit.conf"]
+      - ${HOME}/.nesa/fluentbit:/fluent-bit/state
 
-secrets:
-  node_priv_key:
-    file: ./env/.node_privkey
-
-volumes:
-  logsigner-data:
-
+networks:
+  nesa:
+    driver: bridge
