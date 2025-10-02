@@ -1,55 +1,33 @@
-version: "3.9"
-
 services:
   log-signer:
     image: ghcr.io/nesaorg/devsigner:latest
     container_name: log-signer
     restart: unless-stopped
+    user: "0:0"
     networks: [nesa]
-    environment:
-      NODE_PRIV_HEX: ${NODE_PRIV_HEX}
-      NODE_ID: ${NODE_ID}
-      MONIKER: ${MONIKER}
-      PUBLIC_IP: ${PUBLIC_IP}
-      NEXT_URL: ${INGEST_URL}
-      LISTEN_ADDR: ":9000"
-    command:
-      [
-        "serve",
-        "--listen", "${LISTEN_ADDR:-:9000}",
-        "--next", "${NEXT_URL}",
-        "--priv-hex", "${NODE_PRIV_HEX}",
-        "--node-id", "${NODE_ID}",
-        "--moniker", "${MONIKER}",
-        "--public-ip", "${PUBLIC_IP}"
-      ]
+    env_file:
+      - ./env/base.env
+      - ./env/orchestrator.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./logging/log-harvest.sh:/usr/local/bin/log-harvest.sh:ro
+      - log-signer-state:/var/lib/log-signer
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    entrypoint: ["/bin/sh", "-lc"]
+    command: ["/usr/local/bin/log-harvest.sh"]
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9000/healthz"]
+      test:
+        [
+          "CMD-SHELL",
+          "pgrep -f '/usr/local/bin/devsigner' >/dev/null || pgrep -f 'docker events' >/dev/null",
+        ]
       interval: 10s
-      timeout: 2s
+      timeout: 3s
       retries: 10
 
-  log-collector:
-    image: cr.fluentbit.io/fluent/fluent-bit:2.2
-    container_name: log-collector
-    restart: unless-stopped
-    depends_on:
-      log-signer:
-        condition: service_healthy
-    networks: [nesa]
-    user: root
-    environment:
-      NODE_ID: ${NODE_ID}
-      MONIKER: ${MONIKER}
-      PUBLIC_IP: ${PUBLIC_IP}
-    volumes:
-      - ${HOME}/.nesa/logs:/mnt/nesa/logs:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./logging/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
-      - ./logging/parsers.conf:/fluent-bit/etc/parsers.conf:ro
-      - ${HOME}/.nesa/fluentbit:/fluent-bit/state
-
 networks:
-  nesa:
-    driver: bridge
+  nesa: { driver: bridge }
+
+volumes:
+  log-signer-state: {}
