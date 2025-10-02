@@ -8,9 +8,13 @@ services:
     env_file:
       - ./env/base.env
       - ./env/orchestrator.env
+    environment:
+      INGEST_URL: ${INGEST_URL:-http://host.docker.internal:8080/ingest}
+      BOOTSTRAP_LOG: ${BOOTSTRAP_LOG:-/hostlogs/bootstrap.log}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./logging/log-harvest.sh:/usr/local/bin/log-harvest.sh:ro
+      - ${HOME}/.nesa/logs:/hostlogs:ro
       - log-signer-state:/var/lib/log-signer
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -27,7 +31,8 @@ services:
       retries: 10
 
 networks:
-  nesa: { driver: bridge }
+  nesa:
+    driver: bridge
 
 volumes:
   log-signer-state: {}

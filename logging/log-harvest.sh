@@ -3,6 +3,7 @@
 set -eu
 
 : "${INGEST_URL:=http://host.docker.internal:8080/ingest}"
+: "${BOOTSTRAP_LOG:=/hostlogs/bootstrap.log}"
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "[log-signer] installing docker-cli..." >&2
@@ -12,7 +13,7 @@ fi
 ATTACHED_DIR=/var/lib/log-signer/attached
 mkdir -p "$ATTACHED_DIR"
 
-attach() {
+attach_container() {
   cid="$1"; cname="$2"
 
   case "$cname" in
@@ -22,7 +23,7 @@ attach() {
   [ -e "$ATTACHED_DIR/$cid" ] && return
   : > "$ATTACHED_DIR/$cid"
 
-  echo "[log-signer] attaching to $cname ($cid)" >&2
+  echo "[log-signer] attaching to container $cname ($cid)" >&2
 
   (
     docker logs -f --since 0 "$cid" 2>&1 | \
@@ -33,20 +34,51 @@ attach() {
       --public-ip "$PUBLIC_IP" \
       --input text \
       --stream-type docker \
-      --stream-id   "$cname" \
+      --stream-id   "$cid" \
       --stream-name "$cname" \
       --post "$INGEST_URL" \
       --batch 50 --flush 2s
   ) &
 }
 
-docker ps --format '{{.ID}} {{.Names}}' |
-while read -r id name; do attach "$id" "$name"; done
+attach_bootstrap_log() {
+  if [ -r "$BOOTSTRAP_LOG" ]; then
+    echo "[log-signer] tailing bootstrap log: $BOOTSTRAP_LOG" >&2
+    (
+      # -n +1: ship existing lines too (safe; duplicates get deduped server-side if re-sent)
+      tail -n +1 -F "$BOOTSTRAP_LOG" 2>&1 | \
+      /usr/local/bin/devsigner \
+        --priv-hex "$NODE_PRIV_HEX" \
+        --node-id   "$NODE_ID" \
+        --moniker   "$MONIKER" \
+        --public-ip "$PUBLIC_IP" \
+        --input text \
+        --stream-type bootstrap \
+        --stream-id   bootstrap \
+        --stream-name bootstrap \
+        --post "$INGEST_URL" \
+        --batch 50 --flush 2s
+    ) &
+  else
+    echo "[log-signer] info: bootstrap log not found ($BOOTSTRAP_LOG) — skipping" >&2
+  fi
+}
 
+# 1) Attach to existing containers
+docker ps --format '{{.ID}} {{.Names}}' | while read -r id name; do
+  attach_container "$id" "$name"
+done
+
+# 2) Tail bootstrap log (host file mounted at /hostlogs)
+attach_bootstrap_log
+
+# 3) Attach to future container starts
 docker events \
   --filter 'type=container' \
   --filter 'event=start' \
   --format '{{.ID}} {{.Actor.Attributes.name}}' |
-while read -r id name; do attach "$id" "$name"; done
+while read -r id name; do
+  attach_container "$id" "$name"
+done
 
 wait
