@@ -1,7 +1,11 @@
 
 #!/bin/sh
-set -eu
 
+set -eu
+: "${NODE_PRIV_HEX:?NODE_PRIV_HEX env is required (comes from orchestrator.env)}"
+: "${NODE_ID:=unknown}"
+: "${MONIKER:=unknown}"
+: "${PUBLIC_IP:=0.0.0.0}"
 : "${INGEST_URL:=http://host.docker.internal:8080/ingest}"
 : "${BOOTSTRAP_LOG:=/hostlogs/bootstrap.log}"
 
@@ -29,9 +33,9 @@ attach_container() {
     docker logs -f --since 0 "$cid" 2>&1 | \
     /usr/local/bin/devsigner \
       --priv-hex "$NODE_PRIV_HEX" \
-      --node-id   "$NODE_ID" \
-      --moniker   "$MONIKER" \
-      --public-ip "$PUBLIC_IP" \
+      --node-id   "${NODE_ID:-unknown}" \
+      --moniker   "${MONIKER:-unknown}" \
+      --public-ip "${PUBLIC_IP:-0.0.0.0}" \
       --input text \
       --stream-type docker \
       --stream-id   "$cid" \
@@ -45,13 +49,12 @@ attach_bootstrap_log() {
   if [ -r "$BOOTSTRAP_LOG" ]; then
     echo "[log-signer] tailing bootstrap log: $BOOTSTRAP_LOG" >&2
     (
-      # -n +1: ship existing lines too (safe; duplicates get deduped server-side if re-sent)
       tail -n +1 -F "$BOOTSTRAP_LOG" 2>&1 | \
       /usr/local/bin/devsigner \
         --priv-hex "$NODE_PRIV_HEX" \
-        --node-id   "$NODE_ID" \
-        --moniker   "$MONIKER" \
-        --public-ip "$PUBLIC_IP" \
+        --node-id   "${NODE_ID:-unknown}" \
+        --moniker   "${MONIKER:-unknown}" \
+        --public-ip "${PUBLIC_IP:-0.0.0.0}" \
         --input text \
         --stream-type bootstrap \
         --stream-id   bootstrap \
