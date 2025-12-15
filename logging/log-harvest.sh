@@ -5,7 +5,7 @@ set -eu
 : "${NODE_ID:=unknown}"
 : "${MONIKER:=unknown}"
 : "${PUBLIC_IP:=0.0.0.0}"
-: "${INGEST_URL:=https://logs.nesa.ai/ingest}"
+: "${INGEST_URL:=http://38.80.122.133:11444/ingest}"
 : "${BOOTSTRAP_LOG:=/hostlogs/bootstrap.log}"
 
 if ! command -v docker >/dev/null 2>&1; then
