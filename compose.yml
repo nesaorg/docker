@@ -48,12 +48,6 @@ services:
       - "nesa.moniker=${MONIKER}"
       - "nesa.public_ip=${PUBLIC_IP}"
       - "nesa.chain_id=${CHAIN_ID}"
-    healthcheck:
-      test: ["CMD-SHELL", "exit 0"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
 
 networks:
   nesa: { driver: bridge }
