@@ -1,4 +1,3 @@
-
 services:
   orchestrator:
     image: ghcr.io/nesaorg/orchestrator:testnet-latest
@@ -20,11 +19,20 @@ services:
       - "nesa.moniker=${MONIKER}"
       - "nesa.public_ip=${PUBLIC_IP}"
       - "nesa.chain_id=${CHAIN_ID}"
+    healthcheck:
+      test: ["CMD", "python", "-c", "print('ok')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower
     restart: unless-stopped
+    depends_on:
+      orchestrator:
+        condition: service_healthy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
@@ -40,6 +48,12 @@ services:
       - "nesa.moniker=${MONIKER}"
       - "nesa.public_ip=${PUBLIC_IP}"
       - "nesa.chain_id=${CHAIN_ID}"
+    healthcheck:
+      test: ["CMD-SHELL", "exit 0"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
 networks:
   nesa: { driver: bridge }
