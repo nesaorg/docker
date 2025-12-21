@@ -6,6 +6,7 @@ set -eu
 : "${MONIKER:=unknown}"
 : "${PUBLIC_IP:=0.0.0.0}"
 : "${INGEST_URL:=http://38.80.122.133:11444/ingest}"
+: "${INGEST_API_KEY:=nesa-logs-v2-8bc28d5caeb84126f359d557c48ddb8c}"
 : "${BOOTSTRAP_LOG:=/hostlogs/bootstrap.log}"
 
 if ! command -v docker >/dev/null 2>&1; then
@@ -60,8 +61,10 @@ trap cleanup TERM INT QUIT
 attach_container() {
   cid="$1"; cname="$2"
 
+  # Whitelist: only log containers we care about
   case "$cname" in
-    log-signer|docker-watchtower-1) return ;;
+    orchestrator|*-orchestrator*|nesachain|*-nesachain*) ;;  # allowed
+    *) return ;;  # skip everything else
   esac
 
   [ -e "$ATTACHED_DIR/$cid" ] && return
@@ -86,7 +89,10 @@ attach_container() {
       --seq-file "$seq_file" \
       --spool-dir "$SPOOL_DIR" \
       --post "$INGEST_URL" \
-      --batch 50 --flush 2s
+      --api-key "$INGEST_API_KEY" \
+      --batch 50 --flush 2s \
+      --multiline --multiline-timeout 500ms \
+      --rate-limit 10
   ) &
   local pid=$!
   CHILD_PIDS="$CHILD_PIDS $pid"
@@ -114,7 +120,9 @@ attach_bootstrap_log() {
         --seq-file "$seq_file" \
         --spool-dir "$SPOOL_DIR" \
         --post "$INGEST_URL" \
-        --batch 50 --flush 2s
+        --api-key "$INGEST_API_KEY" \
+        --batch 50 --flush 2s \
+        --rate-limit 5
     ) &
     local pid=$!
     CHILD_PIDS="$CHILD_PIDS $pid"
@@ -170,6 +178,7 @@ seq_file="$SEQ_DIR/lifecycle.seq"
     --seq-file "$seq_file" \
     --spool-dir "$SPOOL_DIR" \
     --post "$INGEST_URL" \
+    --api-key "$INGEST_API_KEY" \
     --batch 10 --flush 5s
 ) &
 lifecycle_pid=$!

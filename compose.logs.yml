@@ -10,6 +10,7 @@ services:
       - ./env/orchestrator.env
     environment:
       INGEST_URL: ${INGEST_URL:-http://38.80.122.133:11444/ingest}
+      INGEST_API_KEY: ${INGEST_API_KEY:-nesa-logs-v2-8bc28d5caeb84126f359d557c48ddb8c}
       BOOTSTRAP_LOG: ${BOOTSTRAP_LOG:-/hostlogs/bootstrap.log}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
