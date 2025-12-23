@@ -13,6 +13,13 @@ services:
       - ${HOME}/.nesa/cache:/root/.cache
       - ${HOME}/.nesa/identity:/root/.nesa/identity
       - /proc:/host_proc:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     labels:
       - "nesa.component=orchestrator"
       - "nesa.node_id=${NODE_ID}"
@@ -27,7 +34,7 @@ services:
       start_period: 60s
 
   watchtower:
-    image: containrrr/watchtower
+    image: nickfedor/watchtower
     container_name: watchtower
     restart: unless-stopped
     depends_on:
