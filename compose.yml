@@ -13,13 +13,6 @@ services:
       - ${HOME}/.nesa/cache:/root/.cache
       - ${HOME}/.nesa/identity:/root/.nesa/identity
       - /proc:/host_proc:ro
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
     labels:
       - "nesa.component=orchestrator"
       - "nesa.node_id=${NODE_ID}"
