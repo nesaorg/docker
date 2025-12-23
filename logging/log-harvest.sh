@@ -22,6 +22,12 @@ PID_DIR="$STATE_DIR/pids"
 SPOOL_DIR="$STATE_DIR/spool"
 mkdir -p "$ATTACHED_DIR" "$SEQ_DIR" "$PID_DIR" "$SPOOL_DIR"
 
+# Clean up stale state from previous runs (machine/container restart)
+# Attached markers and PID files are ephemeral - only seq files should persist
+echo "[log-signer] cleaning up stale state from previous run..." >&2
+rm -f "$ATTACHED_DIR"/* 2>/dev/null || true
+rm -f "$PID_DIR"/*.pid 2>/dev/null || true
+
 # Track all child PIDs for cleanup
 CHILD_PIDS=""
 
@@ -61,13 +67,25 @@ trap cleanup TERM INT QUIT
 attach_container() {
   cid="$1"; cname="$2"
 
-  # Whitelist: only log containers we care about
+  # Whitelist: only log Nesa containers
   case "$cname" in
-    orchestrator|*-orchestrator*|nesachain|*-nesachain*) ;;  # allowed
+    orchestrator|watchtower) ;;  # allowed
     *) return ;;  # skip everything else
   esac
 
-  [ -e "$ATTACHED_DIR/$cid" ] && return
+  # Check if already attached AND process is still running
+  if [ -e "$ATTACHED_DIR/$cid" ]; then
+    if [ -f "$PID_DIR/$cid.pid" ]; then
+      pid=$(cat "$PID_DIR/$cid.pid" 2>/dev/null || echo "")
+      if [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null; then
+        return  # already attached and running
+      fi
+    fi
+    # Marker exists but process dead - clean up and re-attach
+    echo "[log-signer] re-attaching to container $cname (stale marker)" >&2
+    rm -f "$ATTACHED_DIR/$cid" "$PID_DIR/$cid.pid" 2>/dev/null || true
+  fi
+
   : > "$ATTACHED_DIR/$cid"
 
   echo "[log-signer] attaching to container $cname ($cid)" >&2
