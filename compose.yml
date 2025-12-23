@@ -2,6 +2,7 @@ services:
   orchestrator:
     image: ghcr.io/nesaorg/orchestrator:testnet-latest
     container_name: orchestrator
+    platform: linux/amd64
     restart: unless-stopped
     networks: [ nesa ]
     env_file:
